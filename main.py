@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 import pandas as pd
+from zomato_scraper import search_restaurant_zomato
 
 app = FastAPI()
 
@@ -15,6 +16,14 @@ app.add_middleware(
     allow_methods=["*"],  # Allows GET, POST, OPTIONS, etc.
     allow_headers=["*"],  # Allows all headers
 )
+
+# ✅ API Request Zomato
+
+@app.get("/check-restaurant/")
+async def check_restaurant(name: str, location: str = "Hyderabad"):
+    """API endpoint to check restaurant availability on Zomato."""
+    result = search_restaurant_zomato(name, location)
+    return result
 
 # ✅ Load and preprocess dataset
 df = pd.read_csv("Restaurant_Reviews.tsv", sep="\t")
